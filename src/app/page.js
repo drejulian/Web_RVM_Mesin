@@ -55,8 +55,7 @@ export default function MesinDisplayPage() {
     },
 
     onConnectedEvent: (message) => {
-      console.log('📡 Session connected event received:', message);
-      setConnectionStatus('connected');
+      console.log('📡 Socket.IO connected (not user session):', message);
 
       if (sessionReadyTimeoutId) {
         clearTimeout(sessionReadyTimeoutId);
