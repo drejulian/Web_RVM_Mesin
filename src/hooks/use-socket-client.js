@@ -67,6 +67,15 @@ export function useSocket(url, options = {}) {
       onMessage?.(message);
     });
 
+    socket.on('bottles_claimed', (message) => {
+      console.log('📡 Bottles claimed event received:', message);
+      setLastMessage(message);
+      onMessage?.({
+        ...(message || {}),
+        type: 'bottles_claimed',
+      });
+    });
+
     socket.on('connected', (message) => {
       console.log('📡 Connected message:', message);
       onConnectedEvent?.(message);
