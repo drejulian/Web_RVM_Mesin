@@ -13,7 +13,8 @@ export default function MesinDisplayPage() {
   const [sessionReadyTimeoutId, setSessionReadyTimeoutId] = useState(null);
 
   const webRvmUrl = getWebRvmUrl();
-  const bottleinUrl = webRvmUrl ? `${webRvmUrl}/bottlein` : '';
+  const deviceId = process.env.NEXT_PUBLIC_DEVICE_ID || 'RVM-DEFAULT';
+  const bottleinUrl = webRvmUrl ? `${webRvmUrl}/bottlein?deviceId=${deviceId}` : '';
 
   const {
     isConnected,
@@ -51,6 +52,11 @@ export default function MesinDisplayPage() {
         setTimeout(() => setNewDetectionAlert(false), 3000);
 
         playNotificationSound();
+      } else if (message.type === 'bottles_claimed') {
+        console.log('📡 Bottles claimed - resetting counter');
+        setBottleCount(0);
+        setRealtimeData(null);
+        setNewDetectionAlert(false);
       }
     },
 
