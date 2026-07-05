@@ -40,7 +40,7 @@ export default function OnboardingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
+    <div className="min-h-screen bg-gradient-to-b bg-[#00B1FF] flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
       <div className="flex flex-col items-center justify-center space-y-6 sm:space-y-8 md:space-y-10 max-w-md w-full">
         <div className="animate-bounce-slow">
           <Image
@@ -59,7 +59,7 @@ export default function OnboardingPage() {
 
         <button
           onClick={handleStart}
-          className="bg-white hover:bg-gray-100 text-blue-600 font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
+          className="bg-white hover:bg-gray-100 text-[#00B1FF] font-bold text-lg sm:text-xl md:text-2xl px-8 sm:px-12 md:px-16 py-3 sm:py-4 md:py-5 rounded-full shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95"
         >
           Mulai
         </button>

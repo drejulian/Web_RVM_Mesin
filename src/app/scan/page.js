@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { QRCodeSVG } from 'qrcode.react';
 import { useSocket } from '@/hooks/use-socket-client';
 import { getWebRvmUrl } from '@/lib/web-rvm-url';
@@ -13,6 +14,8 @@ export default function MesinDisplayPage() {
   const [sessionReadyTimeoutId, setSessionReadyTimeoutId] = useState(null);
   const [claimStatus, setClaimStatus] = useState('');
   const claimStatusTimeoutRef = useRef(null);
+  const router = useRouter();
+  const [showClaimModal, setShowClaimModal] = useState(false);
 
   const webRvmUrl = getWebRvmUrl();
   const deviceId = process.env.NEXT_PUBLIC_DEVICE_ID || 'RVM-DEFAULT';
@@ -59,15 +62,10 @@ export default function MesinDisplayPage() {
         setBottleCount(0);
         setRealtimeData(null);
         setNewDetectionAlert(false);
-        setClaimStatus('Poin berhasil diclaim');
+        setShowClaimModal(true);
 
-        if (claimStatusTimeoutRef.current) {
-          clearTimeout(claimStatusTimeoutRef.current);
-        }
-
-        claimStatusTimeoutRef.current = setTimeout(() => {
-          setClaimStatus('');
-          claimStatusTimeoutRef.current = null;
+        setTimeout(() => {
+          router.push('/');
         }, 3000);
       }
     },
@@ -167,7 +165,7 @@ export default function MesinDisplayPage() {
   const estimatedPoints = bottleCount * 50;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-600 to-blue-800 flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-b bg-[#00B1FF] flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl w-full">
         {!webRvmUrl && (
           <div className="mb-6 rounded-2xl border border-yellow-300 bg-yellow-50 px-5 py-4 text-yellow-900">
@@ -176,47 +174,41 @@ export default function MesinDisplayPage() {
           </div>
         )}
 
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
+        <div className="text-center mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             Mesin RVM
           </h1>
-          <p className="text-base sm:text-lg lg:text-xl text-blue-100">
+          <p className="text-sm sm:text-base text-blue-100">
             Scan QR Code untuk Memulai
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-          <div className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 text-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-2xl justify-center">
+           <div className="flex flex-col items-center justify-center space-y-3 my-5">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-3 text-center">
               Scan QR Code
             </h2>
-            <div className="flex justify-center items-center bg-gray-50 rounded-2xl p-4 sm:p-6 lg:p-8">
+            <div className="flex justify-center items-center bg-gray-50 rounded-2xl p-3 sm:p-4">
               {bottleinUrl ? (
                 <QRCodeSVG
                   value={bottleinUrl}
-                  size={200}
+                  size={250}
                   level="H"
                   includeMargin={true}
                 />
               ) : (
-                <div className="flex h-[280px] w-[280px] items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white text-center text-sm text-gray-500">
+                <div className="flex h-[160px] w-[160px] items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white text-center text-sm text-gray-500">
                   QR code akan muncul setelah URL deploy diatur
                 </div>
               )}
-            </div>
-            <p className="text-center text-gray-600 mt-6 text-sm">
-              Arahkan kamera ke QR code untuk mengakses halaman bottle-in
-            </p>
-            <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-              <p className="text-xs text-center text-gray-500 break-all">
-                {bottleinUrl}
-              </p>
-            </div>
+            </div>  
+           </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl relative overflow-hidden">
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
+          <div className="bg-white rounded-3xl p-4 sm:p-5 shadow-2xl relative overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-800">
                 Status Mesin
               </h2>
               <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-semibold ${
@@ -244,14 +236,14 @@ export default function MesinDisplayPage() {
               </div>
             </div>
 
-            <div className="space-y-4 sm:space-y-6">
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 sm:p-6 relative">
-                <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-2">
+            <div className="space-y-3">
+              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-3 sm:p-4 relative">
+                <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1">
                   Botol Terdeteksi (Sesi Aktif)
                 </p>
                 <div className="flex items-center justify-center">
                   <h3
-                    className={`text-5xl sm:text-6xl lg:text-8xl font-bold transition-all duration-500 ${
+                    className={`text-4xl sm:text-5xl lg:text-6xl font-bold transition-all duration-500 ${
                       newDetectionAlert
                         ? 'text-green-600 scale-110 animate-pulse'
                         : 'text-blue-600'
@@ -267,8 +259,8 @@ export default function MesinDisplayPage() {
                 )}
               </div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 sm:p-6">
-                <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-2">
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-3 sm:p-4">
+                <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1">
                   Estimasi Poin
                 </p>
                 <div className="flex items-center justify-center">
@@ -282,36 +274,12 @@ export default function MesinDisplayPage() {
                     +{estimatedPoints}
                   </h3>
                 </div>
-                <p className="text-center text-gray-600 mt-2">Poin</p>
+                <p className="text-center text-gray-600 mt-1 text-sm">Poin</p>
                 {claimStatus && (
                   <div className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-center text-sm font-semibold text-green-700">
                     {claimStatus}
                   </div>
                 )}
-              </div>
-
-              <div className="bg-gray-50 rounded-xl p-4">
-                <h4 className="font-semibold text-gray-700 mb-3 text-center">
-                  Cara Menggunakan:
-                </h4>
-                <ol className="text-sm text-gray-600 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <span className="font-bold text-blue-600 min-w-[20px]">1.</span>
-                    <span>Scan QR code dengan kamera smartphone Anda</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-bold text-blue-600 min-w-[20px]">2.</span>
-                    <span>Masukkan botol ke dalam mesin</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-bold text-blue-600 min-w-[20px]">3.</span>
-                    <span>Lihat jumlah botol bertambah di layar</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="font-bold text-blue-600 min-w-[20px]">4.</span>
-                    <span>Klik tombol "Klaim" di smartphone untuk mendapatkan poin</span>
-                  </li>
-                </ol>
               </div>
             </div>
           </div>
@@ -323,15 +291,6 @@ export default function MesinDisplayPage() {
             <span>{socketError}</span>
           </div>
         )}
-
-        <div className="text-center mt-8">
-          <p className="text-white text-sm opacity-75">
-            Mesin RVM - Sistem Penukaran Botol Otomatis
-          </p>
-          <p className="text-white text-xs opacity-50 mt-2">
-            Terhubung ke: {webRvmUrl}
-          </p>
-        </div>
       </div>
 
       <button
@@ -352,6 +311,24 @@ export default function MesinDisplayPage() {
           {isFullscreen ? 'Keluar Fullscreen' : 'Mode Fullscreen'}
         </span>
       </button>
+
+      {showClaimModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 shadow-2xl max-w-md mx-4 text-center animate-scale-in">
+            <div className="mb-4">
+              <svg className="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+              Poin Berhasil Diclaim!
+            </h2>
+            <p className="text-gray-600">
+              Kembali ke halaman awal dalam 3 detik...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
