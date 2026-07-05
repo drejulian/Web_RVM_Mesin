@@ -323,9 +323,6 @@ export default function MesinDisplayPage() {
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
               Poin Berhasil Diclaim!
             </h2>
-            <p className="text-gray-600">
-              Kembali ke halaman awal dalam 3 detik...
-            </p>
           </div>
         </div>
       )}
